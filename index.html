@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Algorithm Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🧮 CPU Scheduling Algorithm Visualizer</h1>
+            <p>Interactive tool for visualizing and analyzing CPU scheduling algorithms</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <!-- Process Input Section -->
+                <section class="panel">
+                    <h2>📥 Process Input</h2>
+                    <div class="input-group">
+                        <label for="arrivalTime">Arrival Time:</label>
+                        <input type="number" id="arrivalTime" placeholder="0" min="0" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="burstTime">Burst Time:</label>
+                        <input type="number" id="burstTime" placeholder="5" min="1" value="5">
+                    </div>
+                    <div class="input-group">
+                        <label for="priority">Priority (optional):</label>
+                        <input type="number" id="priority" placeholder="1" min="1" value="1">
+                    </div>
+                    <button class="btn btn-primary" id="addProcessBtn">➕ Add Process</button>
+                </section>
+
+                <!-- Processes Table -->
+                <section class="panel">
+                    <h2>📋 Processes</h2>
+                    <div class="table-responsive">
+                        <table id="processTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>PID</th>
+                                    <th>AT</th>
+                                    <th>BT</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processList">
+                                <!-- Processes will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-secondary" id="clearAllBtn">🗑️ Clear All</button>
+                </section>
+
+                <!-- Algorithm Selection -->
+                <section class="panel">
+                    <h2>🧮 Algorithm</h2>
+                    <div class="input-group">
+                        <label for="algorithmSelect">Select Algorithm:</label>
+                        <select id="algorithmSelect">
+                            <option value="fcfs">FCFS (First Come First Serve)</option>
+                            <option value="sjf">SJF (Shortest Job First - Non-preemptive)</option>
+                            <option value="srtf">SRTF (Preemptive SJF)</option>
+                            <option value="rr">Round Robin</option>
+                            <option value="priority">Priority (Non-preemptive)</option>
+                            <option value="priority-preemptive">Priority (Preemptive)</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="timeQuantumGroup" style="display: none;">
+                        <label for="timeQuantum">Time Quantum (for RR):</label>
+                        <input type="number" id="timeQuantum" placeholder="2" min="1" value="2">
+                    </div>
+                    <button class="btn btn-primary" id="executeBtn">▶️ Execute</button>
+                </section>
+
+                <!-- Simulation Controls -->
+                <section class="panel">
+                    <h2>🎬 Simulation</h2>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="stepBtn">Step</button>
+                        <button class="btn btn-secondary" id="playBtn">Play</button>
+                        <button class="btn btn-secondary" id="pauseBtn" disabled>Pause</button>
+                        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                    </div>
+                    <div class="input-group">
+                        <label for="speed">Speed:</label>
+                        <input type="range" id="speed" min="0.5" max="3" step="0.5" value="1">
+                        <span id="speedValue">1x</span>
+                    </div>
+                </section>
+
+                <!-- Comparison Section -->
+                <section class="panel">
+                    <h2>🔄 Compare Algorithms</h2>
+                    <button class="btn btn-primary" id="compareBtn">Compare All</button>
+                    <div id="comparisonResults" style="display: none; margin-top: 15px;">
+                        <h3>Comparison Results</h3>
+                        <div id="comparisonTable"></div>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="content">
+                <!-- Gantt Chart Section -->
+                <section class="panel full-width">
+                    <h2>📊 Gantt Chart</h2>
+                    <div id="ganttChartContainer" class="gantt-container">
+                        <div id="ganttChart" class="gantt-chart"></div>
+                        <div id="timelineScale" class="timeline-scale"></div>
+                    </div>
+                    <p id="ganttInfo" class="info-text">Execute an algorithm to generate the Gantt chart</p>
+                </section>
+
+                <!-- Metrics Section -->
+                <section class="panel full-width">
+                    <h2>📈 Process Metrics</h2>
+                    <div class="table-responsive">
+                        <table id="metricsTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Process</th>
+                                    <th>AT</th>
+                                    <th>BT</th>
+                                    <th>CT</th>
+                                    <th>TAT</th>
+                                    <th>WT</th>
+                                    <th>RT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metricsList">
+                                <!-- Metrics will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Averages Section -->
+                <section class="panel full-width">
+                    <h2>📊 Averages</h2>
+                    <div id="averagesContainer" class="averages-container">
+                        <div class="average-card">
+                            <h3>Avg WT</h3>
+                            <p id="avgWT">-</p>
+                        </div>
+                        <div class="average-card">
+                            <h3>Avg TAT</h3>
+                            <p id="avgTAT">-</p>
+                        </div>
+                        <div class="average-card">
+                            <h3>Avg RT</h3>
+                            <p id="avgRT">-</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="panel full-width">
+                    <h2>📉 Visualization Charts</h2>
+                    <div class="charts-container">
+                        <div class="chart-box">
+                            <h3>Comparison Chart</h3>
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h3>CPU Time Distribution</h3>
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 CPU Scheduling Visualizer | Built with ❤️</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="utils/calculations.js"></script>
+    <script src="algorithms/fcfs.js"></script>
+    <script src="algorithms/sjf.js"></script>
+    <script src="algorithms/roundRobin.js"></script>
+    <script src="algorithms/priority.js"></script>
+    <script src="utils/gantt.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
