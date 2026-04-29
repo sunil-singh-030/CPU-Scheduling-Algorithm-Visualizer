@@ -5,7 +5,7 @@ A fully-featured interactive web-based tool for visualizing and analyzing CPU sc
 ## ✨ Features
 
 
-### 1. **Process Management**
+### 1. ** Process Management **
 - ✅ Dynamic process table with CRUD operations
 - ✅ Add/Edit/Delete processes on-the-fly
 - ✅ Auto-generated Process IDs (P1, P2, P3...)
